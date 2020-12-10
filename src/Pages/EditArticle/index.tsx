@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../services/api';
-import { Col, Image } from 'react-bootstrap';
+import { Col, Image, Overlay, Tooltip } from 'react-bootstrap';
 
 import {
   EditArticleForm,
@@ -51,6 +51,8 @@ const EditArticle: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const textAreaRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState('');
+  const [show, setShow] = useState(false);
+  const target = useRef(null);
 
 
   const [article, setArticle] = useState<Article>({
@@ -77,7 +79,7 @@ const EditArticle: React.FC = () => {
             return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
 
           return typeof image.slug === 'string'
-            ? (process.env.BACKEND_URL || 'http://localhost:5000') +
+            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
                 '/api/images/' +
                 image.slug
             : DEFAULT_IMG;
@@ -113,6 +115,7 @@ const EditArticle: React.FC = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(selectedImage);
+    setShow(!show);
   };
 
 
@@ -240,9 +243,20 @@ const EditArticle: React.FC = () => {
               ref={textAreaRef}
               disabled
             />
-            <EditArticleButton onClick={copyToClipboard} variant="primary">
+            <EditArticleButton
+              onClick={copyToClipboard}
+              ref={target}
+              variant="primary"
+            >
               copiar
             </EditArticleButton>
+            <Overlay target={target.current} show={show} placement="right">
+              {props => (
+                <Tooltip id="overlay-example" {...props}>
+                  Copiado!
+                </Tooltip>
+              )}
+            </Overlay>
           </EditArticleForm.Group>
           <EditArticleForm.Group>
             <DatePicker
