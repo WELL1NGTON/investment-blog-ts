@@ -52,10 +52,7 @@ const EditArticle: React.FC = () => {
   const textAreaRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState('');
 
-  const [selectedVisibilityOption, setSelectedVisibilityOption] = useState(
-    'EDITORS',
-  );
-  const [selectedStateOption, setSelectedStateOption] = useState('EDITING');
+
   const [article, setArticle] = useState<Article>({
     title: '',
     description: '',
@@ -68,6 +65,9 @@ const EditArticle: React.FC = () => {
     visibility: 'EDITORS',
     state: 'EDITING',
   });
+
+  const [selectedStateOption, setSelectedStateOption] = useState<String>(article.state);
+  const [selectedVisibilityOption, setSelectedVisibilityOption] = useState<String>(article.visibility);
 
   useEffect(() => {
     api.get('api/images').then(res => {
@@ -115,6 +115,8 @@ const EditArticle: React.FC = () => {
     navigator.clipboard.writeText(selectedImage);
   };
 
+
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -145,6 +147,7 @@ const EditArticle: React.FC = () => {
         console.log(error);
       });
   };
+
 
   return (
     <>
