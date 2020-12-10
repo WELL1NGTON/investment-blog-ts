@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../services/api';
-import { Col, Image } from 'react-bootstrap';
+import { Col, Image , Overlay ,Tooltip} from 'react-bootstrap';
 
 import {
   EditArticleForm,
@@ -51,6 +51,8 @@ const EditArticle: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const textAreaRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState('');
+  const [show, setShow] = useState(false);
+  const target = useRef(null);
 
   const [selectedVisibilityOption, setSelectedVisibilityOption] = useState(
     'EDITORS',
@@ -109,6 +111,7 @@ const EditArticle: React.FC = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(selectedImage);
+    setShow(!show);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -233,9 +236,16 @@ const EditArticle: React.FC = () => {
               ref={textAreaRef}
               disabled
             />
-            <EditArticleButton onClick={copyToClipboard} variant="primary">
+            <EditArticleButton onClick={copyToClipboard} ref={target} variant="primary">
               copiar
             </EditArticleButton>
+            <Overlay target={target.current} show={show} placement="right">
+              {(props) => (
+                <Tooltip id="overlay-example" {...props}>
+                  Copiado!
+                </Tooltip>
+              )}
+            </Overlay>
           </EditArticleForm.Group>
           <EditArticleForm.Group>
             <DatePicker
