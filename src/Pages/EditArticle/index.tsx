@@ -79,7 +79,7 @@ const EditArticle: React.FC = () => {
             return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
 
           return typeof image.slug === 'string'
-            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
+            ? (process.env.BACKEND_URL || 'http://localhost:5000') +
                 '/api/images/' +
                 image.slug
             : DEFAULT_IMG;
@@ -139,6 +139,7 @@ const EditArticle: React.FC = () => {
 
     console.log(newArticle);
 
+    window.confirm("As informações serão atualizadas, tem certeza?") &&
     api
       .post('api/articles/' + params.id, newArticle)
       .then((res: AxiosResponse) => {
@@ -209,6 +210,7 @@ const EditArticle: React.FC = () => {
             <EditArticleForm.Control
               type="text"
               value={article.author}
+              required
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setArticle({ ...article, author: e.target.value })
               }
@@ -218,6 +220,7 @@ const EditArticle: React.FC = () => {
             <EditArticleForm.Label>Categorias </EditArticleForm.Label>
             <EditArticleForm.Control
               type="text"
+              required
               value={article.category}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setArticle({ ...article, category: e.target.value })
