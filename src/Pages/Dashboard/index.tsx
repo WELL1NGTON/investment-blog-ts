@@ -30,10 +30,14 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const deleteArticle = (id: string) => {
-    api
-      .delete('api/articles/' + id)
-      .then((res: AxiosResponse<any>) => console.log(res.data));
-    setArticles(articles.filter((el: Article) => el.slug !== id));
+    if (
+      window.confirm('As informações desse post serão deletadas, tem certeza?')
+    ) {
+      setArticles(articles.filter((el: Article) => el.slug !== id));
+      api
+        .delete('api/articles/' + id)
+        .then((res: AxiosResponse<any>) => console.log(res.data));
+    }
   };
 
   return (

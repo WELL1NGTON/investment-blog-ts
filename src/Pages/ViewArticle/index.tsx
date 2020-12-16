@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown/with-html';
 //import { FacebookProvider, Comments } from 'react-facebook';
 import { AxiosResponse } from 'axios';
 import api from '../../services/api';
-
+import MarkdownToReact from '../../Components/MarkdownToReact';
 import { ShowContainer, ShowJumbotron, ShowRow, ShowCol } from './styles';
 import Footer from '../../Components/Footer';
 
@@ -54,7 +54,8 @@ const ViewArticle: React.FC = () => {
       <ShowContainer>
         <ShowRow>
           <ShowCol>
-            <ReactMarkdown
+            <MarkdownToReact value={article.markdownArticle} />
+            {/* <ReactMarkdown
               escapeHtml={false}
               // linkTarget={'_blank'}
               // rawSourcePos
@@ -80,10 +81,10 @@ const ViewArticle: React.FC = () => {
                 // ],
               ]}
               children={article.markdownArticle}
-            />
-            <FacebookProvider appId="123456789">
+            /> */}
+            {/* <FacebookProvider appId="123456789">
               <Comments href="localhost" />
-            </FacebookProvider>
+            </FacebookProvider> */}
           </ShowCol>
         </ShowRow>
       </ShowContainer>
