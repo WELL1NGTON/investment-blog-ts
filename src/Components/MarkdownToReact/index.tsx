@@ -27,6 +27,7 @@ const MarkdownToReact: React.FC<MarkdownAsReactProps> = ({
         inlineNotes: true,
         innerHTML: true,
       })
+      .use(require('remark-gfm'))
       // .use(require('remark-collapse'))
       .use(require('remark-rehype'), { allowDangerousHtml: true })
       .use(require('rehype-raw'))
