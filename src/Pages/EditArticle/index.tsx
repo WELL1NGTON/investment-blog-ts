@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../services/api';
-import { Col, Image, Overlay, Tooltip } from 'react-bootstrap';
-
+import { Col, Image, Overlay, Tooltip, Container, Row } from 'react-bootstrap';
+import ReactMarkdown from 'react-markdown/with-html';
+import unified from 'unified';
+import remarkParse from 'remark-parse';
 import {
   EditArticleForm,
   EditArticleButton,
@@ -54,7 +56,6 @@ const EditArticle: React.FC = () => {
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-
   const [article, setArticle] = useState<Article>({
     title: '',
     description: '',
@@ -68,8 +69,13 @@ const EditArticle: React.FC = () => {
     state: 'EDITING',
   });
 
-  const [selectedStateOption, setSelectedStateOption] = useState<String>(article.state);
-  const [selectedVisibilityOption, setSelectedVisibilityOption] = useState<String>(article.visibility);
+  const [selectedStateOption, setSelectedStateOption] = useState<String>(
+    article.state,
+  );
+  const [
+    selectedVisibilityOption,
+    setSelectedVisibilityOption,
+  ] = useState<String>(article.visibility);
 
   useEffect(() => {
     api.get('api/images').then(res => {
@@ -79,7 +85,7 @@ const EditArticle: React.FC = () => {
             return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
 
           return typeof image.slug === 'string'
-            ? (process.env.BACKEND_URL || 'http://localhost:5000') +
+            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
                 '/api/images/' +
                 image.slug
             : DEFAULT_IMG;
@@ -118,8 +124,6 @@ const EditArticle: React.FC = () => {
     setShow(!show);
   };
 
-
-
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -139,19 +143,54 @@ const EditArticle: React.FC = () => {
 
     console.log(newArticle);
 
-    window.confirm("As informações serão atualizadas, tem certeza?") &&
-    api
-      .post('api/articles/' + params.id, newArticle)
-      .then((res: AxiosResponse) => {
-        console.log(res.data);
+    window.confirm('As informações serão atualizadas, tem certeza?') &&
+      api
+        .post('api/articles/' + params.id, newArticle)
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
 
-        window.location.href = '/';
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+          window.location.href = '/';
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
   };
 
+  const transformMarkdownToReact = (md: string): React.ReactElement | null => {
+    const reactElement = unified()
+      .use(remarkParse)
+      // .use(require('remark-attr')) //This is too good, it need to be fixed
+      // .use(require('remark-breaks')) //check if Ian wants this plugin
+      .use(require('remark-slug'))
+      .use(require('remark-toc'))
+      .use(require('remark-unwrap-images'))
+      .use(require('remark-emoji')) //useless, but check if Ian wants this
+      .use(require('remark-external-links'), {
+        target: '_blank',
+        rel: ['nofollow', 'noopener', 'noreferrer'],
+      })
+      .use(require('remark-footnotes'), {
+        inlineNotes: true,
+        innerHTML: true,
+      })
+      // .use(require('remark-collapse'))
+      .use(require('remark-rehype'), { allowDangerousHtml: true })
+      .use(require('rehype-raw'))
+      // .use(require('rehype-sanitize')) //good to have but breaks the page to be moved to links (#something-link)
+      .use(require('rehype-react'), {
+        createElement: React.createElement,
+        Fragment: React.Fragment,
+        // components: {
+        //   a: MyLink,
+        //   p: MyParagraph
+        // }
+      })
+      .processSync(md).result as React.ReactElement;
+
+    //also remark-fenced-divs and remark-directive could help
+
+    return React.isValidElement(reactElement) ? reactElement : null;
+  };
 
   return (
     <>
@@ -171,18 +210,61 @@ const EditArticle: React.FC = () => {
               }
             />
           </EditArticleForm.Group>
-          <EditArticleForm.Group>
-            <EditArticleForm.Label>Corpo: </EditArticleForm.Label>
-            <EditArticleForm.Control
-              as="textarea"
-              rows={15}
-              required
-              value={article.markdownArticle}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setArticle({ ...article, markdownArticle: e.target.value })
-              }
-            />
-          </EditArticleForm.Group>
+
+          <Container style={{ border: 0, padding: 0 }}>
+            <Row>
+              <Col>
+                <EditArticleForm.Group>
+                  <EditArticleForm.Label>Corpo: </EditArticleForm.Label>
+                  <EditArticleForm.Control
+                    as="textarea"
+                    rows={15}
+                    required
+                    value={article.markdownArticle}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      setArticle({
+                        ...article,
+                        markdownArticle: e.target.value,
+                      })
+                    }
+                  />
+                </EditArticleForm.Group>
+              </Col>
+              <Col>
+                {
+                  transformMarkdownToReact(article.markdownArticle)
+                  // <ReactMarkdown
+                  //   escapeHtml={false}
+                  //   // linkTarget={'_blank'}
+                  //   // rawSourcePos
+                  //   plugins={[
+                  //     [require('remark-gfm')],
+                  //     [require('remark-slug')],
+                  //     [require('remark-toc')],
+                  //     [require('remark-unwrap-images')],
+                  //     [require('remark-emoji')], //useless, but check if Ian wants this
+                  //     [
+                  //       require('remark-external-links'),
+                  //       {
+                  //         target: '_blank',
+                  //         rel: ['nofollow', 'noopener', 'noreferrer'],
+                  //       },
+                  //     ],
+                  //     // [
+                  //     //   require('remark-footnotes'),
+                  //     //   {
+                  //     //     inlineNotes: true,
+                  //     //     innerHTML: true,
+                  //     //   },
+                  //     // ],
+                  //   ]}
+                  //   children={article.markdownArticle}
+                  // />
+                }
+              </Col>
+            </Row>
+          </Container>
+
           <EditArticleForm.Group>
             <EditArticleForm.Label>Descrição: </EditArticleForm.Label>
             <EditArticleForm.Control

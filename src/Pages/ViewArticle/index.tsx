@@ -54,7 +54,33 @@ const ViewArticle: React.FC = () => {
       <ShowContainer>
         <ShowRow>
           <ShowCol>
-            <ReactMarkdown source={article.markdownArticle} />
+            <ReactMarkdown
+              escapeHtml={false}
+              // linkTarget={'_blank'}
+              // rawSourcePos
+              plugins={[
+                [require('remark-gfm')],
+                [require('remark-slug')],
+                [require('remark-toc')],
+                [require('remark-unwrap-images')],
+                [require('remark-emoji')], //useless, but check if Ian wants this
+                [
+                  require('remark-external-links'),
+                  {
+                    target: '_blank',
+                    rel: ['nofollow', 'noopener', 'noreferrer'],
+                  },
+                ],
+                // [
+                //   require('remark-footnotes'),
+                //   {
+                //     inlineNotes: true,
+                //     innerHTML: true,
+                //   },
+                // ],
+              ]}
+              children={article.markdownArticle}
+            />
             <FacebookProvider appId="123456789">
               <Comments href="localhost" />
             </FacebookProvider>
