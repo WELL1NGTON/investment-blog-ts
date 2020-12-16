@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
-import { FacebookProvider, Comments } from 'react-facebook';
+import ReactMarkdown from 'react-markdown/with-html';
+//import { FacebookProvider, Comments } from 'react-facebook';
 import { AxiosResponse } from 'axios';
 import api from '../../services/api';
 

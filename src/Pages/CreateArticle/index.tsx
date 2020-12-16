@@ -29,7 +29,6 @@ const visibilityOptions: OptionType[] = [
 
 const stateOptions: OptionType[] = [
   { value: 'EDITING', label: 'Editando' },
-  { value: 'PUBLISHED', label: 'Publicado' },
 ];
 
 const CreateArticle: React.FC = () => {
@@ -39,15 +38,13 @@ const CreateArticle: React.FC = () => {
     visibility: 'EDITORS',
     state: 'EDITING',
   });
-  const [selectedVisibilityOption, setSelectedVisibilityOption] = useState(
-    'ALL',
-  );
+  const [selectedVisibilityOption, setSelectedVisibilityOption] = useState('ALL');
   const [selectedStateOption, setSelectedStateOption] = useState('EDITING');
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //const regex = /[\u00C0-\u00FF]*?\b[\w\u00C0-\u00FF\s\-.']+\b/gim;
+    const regex = /[\u00C0-\u00FF]*?\b[\w\u00C0-\u00FF\s\-.']+\b/gim;
 
     const newArticle = {
       title: article.title,
@@ -56,6 +53,8 @@ const CreateArticle: React.FC = () => {
       state: selectedStateOption,
     };
 
+
+    window.confirm("Um novo post será criado, confirma as informações?") &&
     api
       .post('api/articles/', newArticle)
       .then(res => {
@@ -92,6 +91,7 @@ const CreateArticle: React.FC = () => {
             <CreateArticleForm.Label>Author: </CreateArticleForm.Label>
             <CreateArticleForm.Control
               type="text"
+              required
               value={article.author}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setArticle({ ...article, author: e.target.value })
@@ -103,6 +103,7 @@ const CreateArticle: React.FC = () => {
               <CreateArticleForm.Label>Visibilidade: </CreateArticleForm.Label>
               <CreateArticleForm.Control
                 as="select"
+                required
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setSelectedVisibilityOption(e.target.value)
                 }
@@ -118,6 +119,7 @@ const CreateArticle: React.FC = () => {
               <CreateArticleForm.Label>Estado: </CreateArticleForm.Label>
               <CreateArticleForm.Control
                 as="select"
+                required
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setSelectedStateOption(e.target.value)
                 }
