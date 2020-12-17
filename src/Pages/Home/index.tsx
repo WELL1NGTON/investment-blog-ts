@@ -9,6 +9,7 @@ import {
   HomeRow,
   HomeCol,
   AdContainer,
+  HomeBadge,
 } from './styles';
 
 import CustomPagination from '../../Components/CustomPagination';
@@ -24,6 +25,7 @@ interface Article {
   // createdAt: string;
   date: string;
   category: string;
+  previewImg: string;
 }
 
 const Home: React.FC = () => {
@@ -76,15 +78,23 @@ const Home: React.FC = () => {
                     className="text-center h-100"
                     types={article.category}
                   >
-                    <HomeCard.Body>
-                      <HomeCard.Title>{article.title}</HomeCard.Title>
-                      <HomeCard.Text>
-                        {article.description}
-                      </HomeCard.Text>
-                    </HomeCard.Body>
-                    <HomeCard.Footer>
-                      {new Date(article.date).toLocaleString()}
-                    </HomeCard.Footer>
+                    <HomeCard.Img src={article.previewImg} alt={article.title}/>
+                    <HomeCard.ImgOverlay>
+                    <HomeCard.Header>
+                        <h4>
+                          <HomeBadge pill variant="light">{article.category}</HomeBadge>
+                        </h4>
+                      </HomeCard.Header>
+                      <HomeCard.Body>
+                        <HomeCard.Title>{article.title}</HomeCard.Title>
+                        <HomeCard.Text>
+                          {article.description}
+                        </HomeCard.Text>
+                      </HomeCard.Body>
+                      <HomeCard.Footer>
+                        {new Date(article.date).toLocaleString()}
+                      </HomeCard.Footer>
+                    </HomeCard.ImgOverlay>
                   </HomeCard>
                 </Link>
               </HomeCol>
