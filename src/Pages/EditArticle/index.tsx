@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AxiosResponse } from 'axios';
 import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../services/api';
-import { Col, Image, Overlay, Tooltip, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import MarkdownToReact from '../../Components/MarkdownToReact';
+import ImageSelector from '../../Components/ImageSelector';
 import {
   EditArticleForm,
   EditArticleButton,
   EditArticleContainer,
   EditArticleJumbotron,
-  ItemGrid,
 } from './styles';
 
 interface Article {
@@ -22,7 +22,6 @@ interface Article {
   author: string;
   date: Date;
   category: string;
-  isDataImported: boolean;
   visibility: 'ALL' | 'EDITORS' | 'USERS';
   state: 'EDITING' | 'PUBLISHED';
 }
@@ -45,14 +44,8 @@ const stateOptions: OptionType[] = [
 
 const EditArticle: React.FC = () => {
   let params: any = useParams();
-  const DEFAULT_IMG = '';
 
   const [date, setDate] = useState<Date>(new Date());
-  const [images, setImages] = useState<string[]>([]);
-  const textAreaRef = useRef<HTMLInputElement>(null);
-  const [selectedImage, setSelectedImage] = useState('');
-  const [show, setShow] = useState(false);
-  const target = useRef(null);
 
   const [article, setArticle] = useState<Article>({
     title: '',
@@ -62,7 +55,6 @@ const EditArticle: React.FC = () => {
     author: '',
     date: new Date(),
     category: '',
-    isDataImported: false,
     visibility: 'EDITORS',
     state: 'EDITING',
   });
@@ -76,51 +68,26 @@ const EditArticle: React.FC = () => {
   ] = useState<String>(article.visibility);
 
   useEffect(() => {
-    api.get('api/images').then(res => {
-      setImages(
-        res.data.images.map((image: { url: any; slug: any }) => {
-          if (process.env.NODE_ENV === 'production')
-            return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
-
-          return typeof image.slug === 'string'
-            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
-                '/api/images/' +
-                image.slug
-            : DEFAULT_IMG;
-        }),
-      );
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!article.isDataImported) {
-      api
-        .get('api/articles/' + params.id) //getting the id from url
-        .then((response: AxiosResponse) => {
-          setArticle({
-            title: response.data.article.title,
-            description: response.data.article.description,
-            markdownArticle: response.data.article.markdownArticle,
-            tags: response.data.article.tags.join([', ']),
-            author: response.data.article.author,
-            date: new Date(response.data.article.date.toString()),
-            category: response.data.article.category,
-            isDataImported: true,
-            visibility: response.data.article.visibility,
-            state: response.data.article.state,
-          });
-          setDate(new Date(response.data.date.toString()));
-        })
-        .catch(function (error) {
-          console.log(error);
+    api
+      .get('api/articles/' + params.id) //getting the id from url
+      .then((response: AxiosResponse) => {
+        setArticle({
+          title: response.data.article.title,
+          description: response.data.article.description,
+          markdownArticle: response.data.article.markdownArticle,
+          tags: response.data.article.tags.join([', ']),
+          author: response.data.article.author,
+          date: new Date(response.data.article.date.toString()),
+          category: response.data.article.category,
+          visibility: response.data.article.visibility,
+          state: response.data.article.state,
         });
-    }
-  });
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(selectedImage);
-    setShow(!show);
-  };
+        setDate(new Date(response.data.date.toString()));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -172,15 +139,15 @@ const EditArticle: React.FC = () => {
               }
             />
           </EditArticleForm.Group>
-
           <Container style={{ border: 0, padding: 0 }}>
             <Row>
               <Col>
                 <EditArticleForm.Group>
                   <EditArticleForm.Label>Corpo: </EditArticleForm.Label>
+
                   <EditArticleForm.Control
                     as="textarea"
-                    rows={15}
+                    rows={article.markdownArticle.split('\n').length}
                     required
                     value={article.markdownArticle}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -242,40 +209,9 @@ const EditArticle: React.FC = () => {
               }
             />
           </EditArticleForm.Group>
-          <EditArticleForm.Group>
-            <EditArticleForm.Label>Imagens disponiveis</EditArticleForm.Label>
-            <ItemGrid>
-              {images.map((image, i) => (
-                <li key={i}>
-                  <Image
-                    src={image}
-                    thumbnail
-                    onClick={() => setSelectedImage(image)}
-                  />
-                </li>
-              ))}
-            </ItemGrid>
-            <EditArticleForm.Control
-              type="text"
-              value={selectedImage}
-              ref={textAreaRef}
-              disabled
-            />
-            <EditArticleButton
-              onClick={copyToClipboard}
-              ref={target}
-              variant="primary"
-            >
-              copiar
-            </EditArticleButton>
-            <Overlay target={target.current} show={show} placement="right">
-              {props => (
-                <Tooltip id="overlay-example" {...props}>
-                  Copiado!
-                </Tooltip>
-              )}
-            </Overlay>
-          </EditArticleForm.Group>
+
+          <ImageSelector />
+
           <EditArticleForm.Group>
             <DatePicker
               dateFormat="dd/MM/yyyy"
