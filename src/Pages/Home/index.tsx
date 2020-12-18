@@ -92,18 +92,22 @@ const Home: React.FC = () => {
                         <>
                         <HomeCard.Img src={article.previewImg} alt={article.title} />
                           <HomeCard.ImgOverlay>
-                            <HomeCard.Title>{article.title}</HomeCard.Title>
-                            <HomeCard.Text>
-                              {article.description}
-                            </HomeCard.Text>
+                            <HomeCard.Body>
+                              <HomeCard.Title>{article.title}</HomeCard.Title>
+                              <HomeCard.Text>
+                                {article.description}
+                              </HomeCard.Text>
+                            </HomeCard.Body>
                           </HomeCard.ImgOverlay>
                           </>
                        ) : (
                         <>
-                          <HomeCard.Title>{article.title}</HomeCard.Title>
-                          <HomeCard.Text>
-                            {article.description}
-                          </HomeCard.Text>
+                          <HomeCard.Body>
+                            <HomeCard.Title>{article.title}</HomeCard.Title>
+                            <HomeCard.Text>
+                              {article.description}
+                            </HomeCard.Text>
+                          </HomeCard.Body>
                         </>
                         )
                       }

@@ -87,7 +87,7 @@ const EditArticle: React.FC = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [params.id]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
