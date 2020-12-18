@@ -6,7 +6,7 @@ interface CardProps {
 }
 
 export const HomeContainer = styled(Container)`
-+  justify-content: center;
+  justify-content: center;
   position: relative;
   min-height: 100vh;
 `;
@@ -33,6 +33,7 @@ export const HomeCard = styled(Card)<CardProps>`
   background: #222;
   color: #f3f3f3;
   text-align: center;
+   width: '8rem';
   a {
     text-decoration: 'none';
     color: #f3f3f3;

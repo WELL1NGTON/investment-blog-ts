@@ -75,26 +75,42 @@ const Home: React.FC = () => {
               <HomeCol key={article._id} sm={6}>
                 <Link to={'/view/' + article.slug}>
                   <HomeCard
-                    className="text-center h-100"
+                    className="text-center"
                     types={article.category}
                   >
-                    <HomeCard.Img src={article.previewImg} alt={article.title}/>
-                    <HomeCard.ImgOverlay>
-                    <HomeCard.Header>
-                        <h4>
-                          <HomeBadge pill variant="light">{article.category}</HomeBadge>
-                        </h4>
-                      </HomeCard.Header>
-                      <HomeCard.Body>
-                        <HomeCard.Title>{article.title}</HomeCard.Title>
-                        <HomeCard.Text>
-                          {article.description}
-                        </HomeCard.Text>
-                      </HomeCard.Body>
+                     {
+                     article.category ? (
+                        <HomeCard.Header>
+                          <h4>
+                            <HomeBadge pill variant="light">{article.category}</HomeBadge>
+                          </h4>
+                        </HomeCard.Header>
+                        ) : ('')
+                      }
+                    {
+                      article.previewImg ? (
+                        <>
+                        <HomeCard.Img src={article.previewImg} alt={article.title} />
+                          <HomeCard.ImgOverlay>
+                            <HomeCard.Title>{article.title}</HomeCard.Title>
+                            <HomeCard.Text>
+                              {article.description}
+                            </HomeCard.Text>
+                          </HomeCard.ImgOverlay>
+                          </>
+                       ) : (
+                        <>
+                          <HomeCard.Title>{article.title}</HomeCard.Title>
+                          <HomeCard.Text>
+                            {article.description}
+                          </HomeCard.Text>
+                        </>
+                        )
+                      }
+
                       <HomeCard.Footer>
                         {new Date(article.date).toLocaleString()}
                       </HomeCard.Footer>
-                    </HomeCard.ImgOverlay>
                   </HomeCard>
                 </Link>
               </HomeCol>

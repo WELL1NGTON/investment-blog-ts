@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState ,  useEffect} from 'react';
 import api from '../../services/api';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Col } from 'react-bootstrap';
+import { Col, Image } from 'react-bootstrap';
 import {
   CreateArticleForm,
   CreateArticleButton,
   CreateArticleContainer,
   CreateArticleJumbotron,
+  ItemGrid,
 } from './styles';
 
 interface Article {
   title: string;
   author: string;
+  imgPreview: string;
   visibility: 'ALL' | 'EDITORS' | 'USERS';
   state: 'EDITING' | 'PUBLISHED';
 }
@@ -32,14 +34,36 @@ const stateOptions: OptionType[] = [
 ];
 
 const CreateArticle: React.FC = () => {
+  const DEFAULT_IMG = '';
   const [article, setArticle] = useState<Article>({
     title: '',
     author: '',
+    imgPreview: '',
     visibility: 'EDITORS',
     state: 'EDITING',
   });
   const [selectedVisibilityOption, setSelectedVisibilityOption] = useState('ALL');
-  const [selectedStateOption, setSelectedStateOption] = useState('EDITING');
+  const [selectedStateOption, setSelectedStateOption] = useState('CreateING');
+
+  const [images, setImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  useEffect(() => {
+    api.get('api/images').then(res => {
+      setImages(
+        res.data.images.map((image: { url: any; slug: any }) => {
+          if (process.env.NODE_ENV === 'production')
+            return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
+
+          return typeof image.slug === 'string'
+            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
+                '/api/images/' +
+                image.slug
+            : DEFAULT_IMG;
+        }),
+      );
+    });
+  }, []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +71,7 @@ const CreateArticle: React.FC = () => {
     const newArticle = {
       title: article.title,
       author: article.author,
+      imgPreview: selectedImage,
       visibility: selectedVisibilityOption,
       state: selectedStateOption,
     };
@@ -84,6 +109,20 @@ const CreateArticle: React.FC = () => {
                 setArticle({ ...article, title: e.target.value })
               }
             />
+          </CreateArticleForm.Group>
+          <CreateArticleForm.Group>
+            <CreateArticleForm.Label>Imagens disponiveis</CreateArticleForm.Label>
+            <ItemGrid>
+              {images.map((image, i) => (
+                <li key={i}>
+                  <Image
+                    src={image}
+                    thumbnail
+                    onClick={() => setSelectedImage(image)}
+                  />
+                </li>
+              ))}
+            </ItemGrid>
           </CreateArticleForm.Group>
           <CreateArticleForm.Group>
             <CreateArticleForm.Label>Author: </CreateArticleForm.Label>
