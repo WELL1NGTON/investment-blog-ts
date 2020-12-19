@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DropdownButton, Dropdown } from 'react-bootstrap';
+import { StyledDropdownButton, StyledDropdown } from './styles';
 import api from '../../services/api';
 
 const DEFAULT_COLOR = '#FFFFFF';
@@ -88,13 +88,13 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   return (
     <>
       {
-        <DropdownButton
+        <StyledDropdownButton
           title={selected.name}
           style={{ backgroundColor: selected.color }}
         >
           {categories.map(element => {
             return (
-              <Dropdown.Item
+              <StyledDropdown.Item
                 key={element.value}
                 as="button"
                 style={{ backgroundColor: element.color }}
@@ -106,10 +106,10 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
                 }}
               >
                 {element.name}
-              </Dropdown.Item>
+              </StyledDropdown.Item>
             );
           })}
-        </DropdownButton>
+        </StyledDropdownButton>
       }
     </>
   );

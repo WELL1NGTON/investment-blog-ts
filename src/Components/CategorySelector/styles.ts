@@ -1,15 +1,14 @@
 import styled from "styled-components";
-import { Form , FormControl} from 'react-bootstrap';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
-export const StyledForm = styled(Form)`
-  width: 75%;
+export const StyledDropdownButton= styled(DropdownButton)`
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-
 `;
 
-export const StyledFormControl = styled(FormControl)`
+export const StyledDropdown = styled(Dropdown)`
   text-align: center;
   background: #f3f3f3;
   border-radius: 10px;

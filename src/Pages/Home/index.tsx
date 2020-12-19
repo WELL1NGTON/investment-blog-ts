@@ -12,9 +12,9 @@ import {
   HomeCol,
   AdContainer,
   HomeBadge,
+  HomeInputGroup
 } from './styles';
 
-import { Col, Container, Row } from 'react-bootstrap';
 
 import CustomPagination from '../../Components/CustomPagination';
 import SearchForm from '../../Components/SearchForm';
@@ -134,27 +134,19 @@ const Home: React.FC = () => {
       <HomeJumbotron fluid>
         <h1>Encontre investimentos em que você acredita!</h1>
       </HomeJumbotron>
-      <Container style={{ border: 0, padding: 0 }} fluid>
-        <Row>
-          <Col>
-            <SearchForm
-              onChange={handleSearchInput}
-              value={search.searchText}
-            />
-            {search.typing ? <p>Buscando...</p> : null}
-          </Col>
-          <Col md="auto">
-            <CategorySelector
-              onClick={category => {
-                setQuery({ ...query, category: category });
-              }}
-              category={query.category}
-              searchQueryMode={true}
-            />
-          </Col>
-        </Row>
-      </Container>
-
+      <HomeInputGroup>
+        <SearchForm
+          onChange={handleSearchInput}
+          value={search.searchText}
+        />
+        <CategorySelector
+          onClick={category => {
+            setQuery({ ...query, category: category });
+          }}
+          category={query.category}
+          searchQueryMode={true}
+        />
+      </HomeInputGroup>
       <AdContainer />
       <HomeContainer>
         <HomeRow>

@@ -1,5 +1,5 @@
 import styled , {css} from 'styled-components';
-import { Container, Jumbotron, Row, Col, Card , Badge} from 'react-bootstrap';
+import { Container, Jumbotron, Row, Col, Card , Badge, InputGroup} from 'react-bootstrap';
 
 interface CardProps {
   types: 'IMPACTO SOCIAL' | 'ALTERNATIVOS' | 'DICAS' | 'IDEIAS';
@@ -10,6 +10,7 @@ export const HomeContainer = styled(Container)`
   position: relative;
   min-height: 100vh;
 `;
+
 export const HomeJumbotron = styled(Jumbotron)`
   background: #6A1EDF;
   color: #f3f3f3;
@@ -27,6 +28,12 @@ export const HomeCol = styled(Col)`
 `;
 
 export const HomeBadge = styled(Badge)``;
+
+export const HomeInputGroup =  styled(InputGroup)`
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+`;
 
 export const HomeCard = styled(Card)<CardProps>`
   margin-top: 8px;
