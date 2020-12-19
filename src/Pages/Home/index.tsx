@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { AxiosResponse } from 'axios';
+import qs from 'qs';
 import api from '../../services/api';
+
 import {
   HomeContainer,
   HomeCard,
@@ -12,8 +14,11 @@ import {
   HomeBadge,
 } from './styles';
 
+import { Col, Container, Row } from 'react-bootstrap';
+
 import CustomPagination from '../../Components/CustomPagination';
 import SearchForm from '../../Components/SearchForm';
+import CategorySelector from '../../Components/CategorySelector';
 import Footer from '../../Components/Footer';
 
 interface Article {
@@ -28,29 +33,92 @@ interface Article {
   previewImg: string;
 }
 
+interface Search {
+  searchText: string;
+  typing: boolean;
+  typingTimeout: number;
+}
+
+interface Query {
+  search: string;
+  category: string;
+}
+
 const Home: React.FC = () => {
+  let location: any = useLocation();
   const [articles, setArticles] = useState<Article[]>([]);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState<Search>({
+    searchText: String(
+      qs.parse(location.search, { ignoreQueryPrefix: true })?.search || '',
+    ),
+    typing: false,
+    typingTimeout: 0,
+  });
+  const [query, setQuery] = useState<Query>({
+    search: String(
+      qs.parse(location.search, { ignoreQueryPrefix: true })?.search || '',
+    ),
+    category: String(
+      qs.parse(location.search, { ignoreQueryPrefix: true })?.category || '',
+    ),
+  });
 
-  const [searchText, setSearchText] = useState('');
+  console.log('query', query);
 
-  useEffect(() => {
-    api.get('api/articles/').then(res => setArticles(res.data.articles));
-  }, []);
+  const generateQueryString = (query: Query): string => {
+    return `/${
+      query?.search || query?.category
+        ? `?${Object.entries(query).reduce((acummulator, entry) => {
+            if (!entry[0] || !entry[1]) return acummulator;
+            return (
+              acummulator + `${acummulator ? '&' : ''}${entry[0]}=${entry[1]}`
+            );
+          }, '')}`
+        : ''
+    }`;
+  };
+
+  window.history.replaceState(null, '', generateQueryString(query));
 
   useEffect(() => {
     api
-      .get(`api/articles?${searchText ? 'search=' + searchText : ''}`)
-      .then((response: AxiosResponse) => {
-        setArticles(response.data.articles);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [searchText]);
+      .get(`api/articles${generateQueryString(query)}`)
+      .then(res => setArticles(res.data.articles));
+  }, [query]);
+
+  // useEffect(() => {
+  //   api
+  //     .get(`api/articles?${searchText ? `search=${searchText}` : ''}`)
+  //     .then((response: AxiosResponse) => {
+  //       setArticles(response.data.articles);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchText(e.target.value);
+    if (search.typingTimeout) {
+      clearTimeout(search.typingTimeout);
+    }
+
+    const searchText = e.target.value;
+
+    setSearch({
+      searchText,
+      typing: true,
+      typingTimeout: setTimeout(() => {
+        setQuery({ ...query, search: searchText });
+
+        setSearch({
+          searchText,
+          typing: false,
+          typingTimeout: 0,
+        });
+      }, 1000),
+    });
+    // setSearchText(e.target.value);
   };
 
   const handlePaginate = (value: number) => {
@@ -66,7 +134,27 @@ const Home: React.FC = () => {
       <HomeJumbotron fluid>
         <h1>Encontre investimentos em que você acredita!</h1>
       </HomeJumbotron>
-      <SearchForm onChange={handleSearchInput} value={searchText} />
+      <Container style={{ border: 0, padding: 0 }} fluid>
+        <Row>
+          <Col>
+            <SearchForm
+              onChange={handleSearchInput}
+              value={search.searchText}
+            />
+            {search.typing ? <p>Buscando...</p> : null}
+          </Col>
+          <Col md="auto">
+            <CategorySelector
+              onClick={category => {
+                setQuery({ ...query, category: category });
+              }}
+              category={query.category}
+              searchQueryMode={true}
+            />
+          </Col>
+        </Row>
+      </Container>
+
       <AdContainer />
       <HomeContainer>
         <HomeRow>
@@ -74,47 +162,43 @@ const Home: React.FC = () => {
             currentPosts.map(article => (
               <HomeCol key={article._id} sm={6}>
                 <Link to={'/view/' + article.slug}>
-                  <HomeCard
-                    className="text-center"
-                    types={article.category}
-                  >
-                     {
-                     article.category ? (
-                        <HomeCard.Header>
-                          <h4>
-                            <HomeBadge pill variant="light">{article.category}</HomeBadge>
-                          </h4>
-                        </HomeCard.Header>
-                        ) : ('')
-                      }
-                    {
-                      article.previewImg ? (
-                        <>
-                        <HomeCard.Img src={article.previewImg} alt={article.title} />
-                          <HomeCard.ImgOverlay>
-                            <HomeCard.Body>
-                              <HomeCard.Title>{article.title}</HomeCard.Title>
-                              <HomeCard.Text>
-                                {article.description}
-                              </HomeCard.Text>
-                            </HomeCard.Body>
-                          </HomeCard.ImgOverlay>
-                          </>
-                       ) : (
-                        <>
+                  <HomeCard className="text-center" types={article.category}>
+                    {article.category ? (
+                      <HomeCard.Header>
+                        <h4>
+                          <HomeBadge pill variant="light">
+                            {article.category}
+                          </HomeBadge>
+                        </h4>
+                      </HomeCard.Header>
+                    ) : (
+                      ''
+                    )}
+                    {article.previewImg ? (
+                      <>
+                        <HomeCard.Img
+                          src={article.previewImg}
+                          alt={article.title}
+                        />
+                        <HomeCard.ImgOverlay>
                           <HomeCard.Body>
                             <HomeCard.Title>{article.title}</HomeCard.Title>
-                            <HomeCard.Text>
-                              {article.description}
-                            </HomeCard.Text>
+                            <HomeCard.Text>{article.description}</HomeCard.Text>
                           </HomeCard.Body>
-                        </>
-                        )
-                      }
+                        </HomeCard.ImgOverlay>
+                      </>
+                    ) : (
+                      <>
+                        <HomeCard.Body>
+                          <HomeCard.Title>{article.title}</HomeCard.Title>
+                          <HomeCard.Text>{article.description}</HomeCard.Text>
+                        </HomeCard.Body>
+                      </>
+                    )}
 
-                      <HomeCard.Footer>
-                        {new Date(article.date).toLocaleString()}
-                      </HomeCard.Footer>
+                    <HomeCard.Footer>
+                      {new Date(article.date).toLocaleString()}
+                    </HomeCard.Footer>
                   </HomeCard>
                 </Link>
               </HomeCol>
@@ -135,4 +219,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withRouter(Home);

@@ -7,6 +7,7 @@ import api from '../../services/api';
 import { Col, Container, Row } from 'react-bootstrap';
 import MarkdownToReact from '../../Components/MarkdownToReact';
 import ImageSelector from '../../Components/ImageSelector';
+import CategorySelector from '../../Components/CategorySelector';
 import {
   EditArticleForm,
   EditArticleButton,
@@ -55,17 +56,9 @@ const EditArticle: React.FC = () => {
     author: '',
     date: new Date(),
     category: '',
-    visibility: 'EDITORS',
+    visibility: 'ALL',
     state: 'EDITING',
   });
-
-  const [selectedStateOption, setSelectedStateOption] = useState<String>(
-    article.state,
-  );
-  const [
-    selectedVisibilityOption,
-    setSelectedVisibilityOption,
-  ] = useState<String>(article.visibility);
 
   useEffect(() => {
     api
@@ -102,8 +95,8 @@ const EditArticle: React.FC = () => {
       author: article.author,
       date: article.date,
       category: article.category,
-      visibility: selectedVisibilityOption,
-      state: selectedStateOption,
+      visibility: article.visibility,
+      state: article.state,
     };
 
     console.log(newArticle);
@@ -199,15 +192,20 @@ const EditArticle: React.FC = () => {
             />
           </EditArticleForm.Group>
           <EditArticleForm.Group>
+            <CategorySelector
+              onClick={category => setArticle({ ...article, category })}
+              category={article.category}
+              searchQueryMode={false}
+            />
             <EditArticleForm.Label>Categorias </EditArticleForm.Label>
-            <EditArticleForm.Control
+            {/* <EditArticleForm.Control
               type="text"
               required
               value={article.category}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setArticle({ ...article, category: e.target.value })
               }
-            />
+            /> */}
           </EditArticleForm.Group>
 
           <ImageSelector />
@@ -228,8 +226,12 @@ const EditArticle: React.FC = () => {
               <EditArticleForm.Control
                 as="select"
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSelectedVisibilityOption(e.target.value)
+                  (e.target.value === 'ALL' ||
+                    e.target.value === 'EDITORS' ||
+                    e.target.value === 'USERS') &&
+                  setArticle({ ...article, visibility: e.target.value })
                 }
+                value={article.visibility}
               >
                 {visibilityOptions.map((r, i) => (
                   <option key={i} value={r.value}>
@@ -243,8 +245,11 @@ const EditArticle: React.FC = () => {
               <EditArticleForm.Control
                 as="select"
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSelectedStateOption(e.target.value)
+                  (e.target.value === 'EDITING' ||
+                    e.target.value === 'PUBLISHED') &&
+                  setArticle({ ...article, state: e.target.value })
                 }
+                value={article.state}
               >
                 {stateOptions.map((r, i) => (
                   <option key={i} value={r.value}>
