@@ -13,7 +13,7 @@ import {
 interface Article {
   title: string;
   author: string;
-  imgPreview: string;
+  previewImg: string;
   visibility: 'ALL' | 'EDITORS' | 'USERS';
   state: 'EDITING' | 'PUBLISHED';
 }
@@ -38,12 +38,12 @@ const CreateArticle: React.FC = () => {
   const [article, setArticle] = useState<Article>({
     title: '',
     author: '',
-    imgPreview: '',
+    previewImg: '',
     visibility: 'EDITORS',
     state: 'EDITING',
   });
   const [selectedVisibilityOption, setSelectedVisibilityOption] = useState('ALL');
-  const [selectedStateOption, setSelectedStateOption] = useState('CreateING');
+  const [selectedStateOption, setSelectedStateOption] = useState('EDITING');
 
   const [images, setImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState('');
@@ -71,7 +71,7 @@ const CreateArticle: React.FC = () => {
     const newArticle = {
       title: article.title,
       author: article.author,
-      imgPreview: selectedImage,
+      previewImg: selectedImage ? selectedImage : undefined,
       visibility: selectedVisibilityOption,
       state: selectedStateOption,
     };
