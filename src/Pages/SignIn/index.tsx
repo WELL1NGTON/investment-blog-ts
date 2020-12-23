@@ -25,10 +25,15 @@ const SignIn: React.FC = () => {
   const { register, errors, handleSubmit} = useForm();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     signin(user.email, user.password).then(res => {
-      console.log(res);
-      window.location.href = '/';
+      if(res){
+        window.location.href = '/';
+      }
+      else {
+        alert("Usuário ou senha incorretos.")
+      }
     });
   };
 
@@ -41,7 +46,7 @@ const SignIn: React.FC = () => {
             <h4 className="mb">Bem-vindo</h4>
           </WelcomeContainer>
 
-          <SignInForm onSubmit={handleSubmit(onSubmit)}>
+          <SignInForm onSubmit={onSubmit}>
             <SignInForm.Group>
               <SignInForm.Control
                 type="text"
