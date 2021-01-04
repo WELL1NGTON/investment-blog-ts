@@ -15,7 +15,6 @@ import {
   HomeInputGroup
 } from './styles';
 
-
 import CustomPagination from '../../Components/CustomPagination';
 import SearchForm from '../../Components/SearchForm';
 import CategorySelector from '../../Components/CategorySelector';
@@ -158,7 +157,7 @@ const Home: React.FC = () => {
                     {article.category ? (
                       <HomeCard.Header>
                         <h4>
-                          <HomeBadge pill variant="light">
+                          <HomeBadge pill color="red">
                             {article.category}
                           </HomeBadge>
                         </h4>

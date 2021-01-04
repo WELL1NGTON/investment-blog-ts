@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import api from '../../services/api';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Image } from 'react-bootstrap';
 import MarkdownToReact from '../../Components/MarkdownToReact';
 import ImageSelector from '../../Components/ImageSelector';
 import CategorySelector from '../../Components/CategorySelector';
@@ -13,6 +13,7 @@ import {
   EditArticleButton,
   EditArticleContainer,
   EditArticleJumbotron,
+  ItemGrid
 } from './styles';
 
 interface Article {
@@ -21,6 +22,7 @@ interface Article {
   markdownArticle: string;
   tags: string;
   author: string;
+  previewImg: string;
   date: Date;
   category: string;
   visibility: 'ALL' | 'EDITORS' | 'USERS';
@@ -45,6 +47,10 @@ const stateOptions: OptionType[] = [
 
 const EditArticle: React.FC = () => {
   let params: any = useParams();
+  const DEFAULT_IMG = '';
+
+  const [images, setImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState('');
 
   const [date, setDate] = useState<Date>(new Date());
 
@@ -54,11 +60,29 @@ const EditArticle: React.FC = () => {
     markdownArticle: '',
     tags: '',
     author: '',
+    previewImg: '',
     date: new Date(),
     category: '',
     visibility: 'ALL',
     state: 'EDITING',
   });
+
+  useEffect(() => {
+    api.get('api/images').then(res => {
+      setImages(
+        res.data.images.map((image: { url: any; slug: any }) => {
+          if (process.env.NODE_ENV === 'production')
+            return typeof image.url === 'string' ? image.url : DEFAULT_IMG;
+
+          return typeof image.slug === 'string'
+            ? (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000') +
+                '/api/images/' +
+                image.slug
+            : DEFAULT_IMG;
+        }),
+      );
+    });
+  }, []);
 
   useEffect(() => {
     api
@@ -68,6 +92,7 @@ const EditArticle: React.FC = () => {
           title: response.data.article.title,
           description: response.data.article.description,
           markdownArticle: response.data.article.markdownArticle,
+          previewImg: response.data.article.selectedImage,
           tags: response.data.article.tags.join([', ']),
           author: response.data.article.author,
           date: new Date(response.data.article.date.toString()),
@@ -93,6 +118,7 @@ const EditArticle: React.FC = () => {
       markdownArticle: article.markdownArticle,
       tags: article.tags.match(regex),
       author: article.author,
+      previewImg: selectedImage ? selectedImage : undefined,
       date: article.date,
       category: article.category,
       visibility: article.visibility,
@@ -190,6 +216,20 @@ const EditArticle: React.FC = () => {
                 setArticle({ ...article, author: e.target.value })
               }
             />
+          </EditArticleForm.Group>
+          <EditArticleForm.Group>
+            <EditArticleForm.Label>Miniaturas disponiveis</EditArticleForm.Label>
+            <ItemGrid>
+              {images.map((image, i) => (
+                <li key={i} className={selectedImage ? 'selected' :  ''}>
+                  <Image
+                    src={image}
+                    thumbnail
+                    onClick={() => setSelectedImage(image)}
+                  />
+                </li>
+              ))}
+            </ItemGrid>
           </EditArticleForm.Group>
           <EditArticleForm.Group>
             <CategorySelector
