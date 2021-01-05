@@ -43,9 +43,16 @@ interface Query {
   category: string;
 }
 
+interface Category{
+  value: string;
+  name: string;
+  color: string;
+}
+
 const Home: React.FC = () => {
   let location: any = useLocation();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState<Search>({
     searchText: String(
@@ -62,8 +69,6 @@ const Home: React.FC = () => {
       qs.parse(location.search, { ignoreQueryPrefix: true })?.category || '',
     ),
   });
-
-  console.log('query', query);
 
   const generateQueryString = (query: Query): string => {
     return `/${
@@ -85,6 +90,12 @@ const Home: React.FC = () => {
       .get(`api/articles${generateQueryString(query)}`)
       .then(res => setArticles(res.data.articles));
   }, [query]);
+
+  useEffect(()=> {
+    api.get('api/categories').then(res => {
+      setCategories(res.data.categories)
+    })
+  },[]);
 
   // useEffect(() => {
   //   api
@@ -153,11 +164,11 @@ const Home: React.FC = () => {
             currentPosts.map(article => (
               <HomeCol key={article._id} sm={6}>
                 <Link to={'/view/' + article.slug}>
-                  <HomeCard className="text-center" types={article.category}>
+                  <HomeCard className="text-center">
                     {article.category ? (
                       <HomeCard.Header>
                         <h4>
-                          <HomeBadge pill color="red">
+                          <HomeBadge pill style={{backgroundColor: categories.find(category => category.name === article.category)?.color}}>
                             {article.category}
                           </HomeBadge>
                         </h4>

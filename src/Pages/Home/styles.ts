@@ -1,4 +1,4 @@
-import styled , {css} from 'styled-components';
+import styled  from 'styled-components';
 import { Container, Jumbotron, Row, Col, Card , Badge, InputGroup} from 'react-bootstrap';
 
 interface CardProps {
@@ -49,20 +49,6 @@ export const HomeCard = styled(Card)<CardProps>`
   p {
     text-align: justify;
   }
-
-  ${props => props.types === 'IMPACTO SOCIAL' && css`
-    border: 'danger';
-  ` }
-  ${props => props.types === 'ALTERNATIVOS' && css`
-    border: 'warning';
-  ` }
-  ${props => props.types === 'DICAS' && css`
-    border: 'success';
-  ` }
-  ${props => props.types === 'IDEIAS' && css`
-    border: 'info';
-  ` }
-
 `;
 
 export const AdContainer = styled.div`
