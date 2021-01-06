@@ -22,7 +22,7 @@ const SignIn: React.FC = () => {
     password: '',
   });
 
-  const { register, errors, handleSubmit} = useForm();
+  const { register, errors} = useForm();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,7 +58,9 @@ const SignIn: React.FC = () => {
                   setUser({ ...user, email: e.target.value })
                 }
               />
-              <SignInForm.Control
+              </SignInForm.Group>
+            <SignInForm.Group>
+            <SignInForm.Control
                 type="password"
                 placeholder="Senha"
                 required

@@ -27,7 +27,13 @@ export const HomeCol = styled(Col)`
   }
 `;
 
-export const HomeBadge = styled(Badge)``;
+export const HomeBadge = styled(Badge)`
+  font-weight: normal;
+  color: #F62967;
+  border: 5px solid #F62967;
+  border-radius: 10px;
+  padding: 5px 70px;
+`;
 
 export const HomeInputGroup =  styled(InputGroup)`
   display: flex;

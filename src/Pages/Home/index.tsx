@@ -167,11 +167,15 @@ const Home: React.FC = () => {
                   <HomeCard className="text-center">
                     {article.category ? (
                       <HomeCard.Header>
-                        <h4>
-                          <HomeBadge pill style={{backgroundColor: categories.find(category => category.name === article.category)?.color}}>
+                        <h3>
+                          <HomeBadge
+                            style={{
+                              borderColor: categories.find(category => category.name === article.category)?.color,
+                              color: categories.find(category => category.name === article.category)?.color
+                            }}>
                             {article.category}
                           </HomeBadge>
-                        </h4>
+                        </h3>
                       </HomeCard.Header>
                     ) : (
                       ''
@@ -181,6 +185,7 @@ const Home: React.FC = () => {
                         <HomeCard.Img
                           src={article.previewImg}
                           alt={article.title}
+                          style={{filter: 'blur(2px)'}}
                         />
                         <HomeCard.ImgOverlay>
                           <HomeCard.Body>

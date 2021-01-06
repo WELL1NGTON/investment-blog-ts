@@ -14,6 +14,10 @@ export const SignInForm = styled(Form)`
   max-width: 320px;
   padding-top: 24px;
   margin: auto;
+
+  .control {
+    margin-top: 5px;
+  }
   `;
 export const SignInButton = styled(Button)``;
 
