@@ -9,7 +9,7 @@ const SearchForm: React.FC<SearchFormProps> = ({onChange, value}:SearchFormProps
 
   return (
       <StyledForm>
-        <StyledFormControl type="text" placeholder="Search" className="mr-sm-2" onChange={onChange} value={value}/>
+        <StyledFormControl type="text" placeholder="Buscar" className="mr-sm-2" onChange={onChange} value={value}/>
       </StyledForm>
   );
 };

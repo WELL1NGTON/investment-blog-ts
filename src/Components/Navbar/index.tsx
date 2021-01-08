@@ -22,13 +22,13 @@ const Navbar: React.FC = () => {
         <Nav className="justify-content-end">
           <Nav.Item>
             <Nav.Link as={Link} to="/">
-              Articles
+              Artigos
             </Nav.Link>
           </Nav.Item>
           {isAuthenticated ? (
             <Nav.Item>
               <Nav.Link as={Link} to={'/create'}>
-                Create Article
+                Criar Artigos
               </Nav.Link>
             </Nav.Item>
           ) : (

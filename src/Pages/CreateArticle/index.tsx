@@ -95,12 +95,12 @@ const CreateArticle: React.FC = () => {
   return (
     <>
       <CreateArticleJumbotron fluid>
-        <h3>Create New Article</h3>
+        <h3>Criar Artigo</h3>
       </CreateArticleJumbotron>
       <CreateArticleContainer>
         <CreateArticleForm onSubmit={onSubmit}>
           <CreateArticleForm.Group>
-            <CreateArticleForm.Label>Article Title: </CreateArticleForm.Label>
+            <CreateArticleForm.Label>Titulo: </CreateArticleForm.Label>
             <CreateArticleForm.Control
               type="text"
               required
@@ -125,7 +125,7 @@ const CreateArticle: React.FC = () => {
             </ItemGrid>
           </CreateArticleForm.Group>
           <CreateArticleForm.Group>
-            <CreateArticleForm.Label>Author: </CreateArticleForm.Label>
+            <CreateArticleForm.Label>Autor: </CreateArticleForm.Label>
             <CreateArticleForm.Control
               type="text"
               required
@@ -171,7 +171,7 @@ const CreateArticle: React.FC = () => {
           </CreateArticleForm.Row>
           <CreateArticleForm.Group>
             <CreateArticleButton type="submit" variant="primary">
-              Create Article
+              Criar
             </CreateArticleButton>
           </CreateArticleForm.Group>
         </CreateArticleForm>

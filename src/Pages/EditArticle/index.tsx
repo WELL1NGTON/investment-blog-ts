@@ -197,7 +197,7 @@ const EditArticle: React.FC = () => {
             />
           </EditArticleForm.Group>
           <EditArticleForm.Group>
-            <EditArticleForm.Label>Tags </EditArticleForm.Label>
+            <EditArticleForm.Label>Tags: </EditArticleForm.Label>
             <EditArticleForm.Control
               type="text"
               value={article.tags}
@@ -218,7 +218,7 @@ const EditArticle: React.FC = () => {
             />
           </EditArticleForm.Group>
           <EditArticleForm.Group>
-            <EditArticleForm.Label>Miniaturas disponiveis</EditArticleForm.Label>
+            <EditArticleForm.Label>Miniaturas disponíveis: </EditArticleForm.Label>
             <ItemGrid>
               {images.map((image, i) => (
                 <li key={i} className={selectedImage ? 'selected' :  ''}>
@@ -230,6 +230,13 @@ const EditArticle: React.FC = () => {
                 </li>
               ))}
             </ItemGrid>
+            <EditArticleForm.Control
+              type="text"
+              value={selectedImage}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSelectedImage( e.target.value )}
+              placeholder='Insira a URL de uma miniatura nova.'
+            />
           </EditArticleForm.Group>
           <EditArticleForm.Group>
             <CategorySelector
@@ -237,7 +244,7 @@ const EditArticle: React.FC = () => {
               category={article.category}
               searchQueryMode={false}
             />
-            <EditArticleForm.Label>Categorias </EditArticleForm.Label>
+            <EditArticleForm.Label>Categorias: </EditArticleForm.Label>
             {/* <EditArticleForm.Control
               type="text"
               required
