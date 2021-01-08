@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import api from '../../services/api';
 import "react-colorful/dist/index.css";
 import {CreateCategoryJumbotron, CreateCategoryContainer, CreateCategoryForm, CreateCategoryButton} from './styles';
 import { HexColorPicker } from 'react-colorful';
@@ -10,7 +11,7 @@ interface ICategory {
 }
 
 const CreateCategory: React.FC = () => {
-  const [category, setCategory] = useState<ICategory>({name: '', color: '', visible: false});
+  const [category, setCategory] = useState<ICategory>({name: '', color: '', visible: true});
 
   const [color, setColor] = useState("#aabbcc");
 
@@ -22,6 +23,20 @@ const CreateCategory: React.FC = () => {
       color: color,
       visible: category.visible
     }
+
+    window.confirm("Um nova categoria será criado, confirma as informações?") &&
+    api
+      .post('api/categories/', newCategory)
+      .then(res => {
+        console.log(res.data);
+
+        window.location.href = '/';
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+
 
   }
   return (
