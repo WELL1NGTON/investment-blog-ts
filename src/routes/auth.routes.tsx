@@ -16,7 +16,7 @@ const Routes: React.FC = () => (
     <Route path="/create" component={CreateArticle} />
     <Route path="/edit/:id" component={EditArticle} />
     <Route path="/singup" component={Singup} />
-    <Route path="/UploadImage" component={UploadImage} />
+    <Route path="/uploadImage" component={UploadImage} />
     <Route path="/view/:id" component={ViewArticle} />
     <Route path="/createCategory" component={CreateCategory}/>
     <Route  component={NotFounded} />

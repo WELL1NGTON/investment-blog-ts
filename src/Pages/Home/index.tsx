@@ -165,31 +165,30 @@ const Home: React.FC = () => {
               <HomeCol key={article._id} sm={6}>
                 <Link to={'/view/' + article.slug}>
                   <HomeCard className="text-center">
-                    {article.category ? (
-                      <HomeCard.Header>
-                        <h3>
-                          <HomeBadge
-                            style={{
-                              borderColor: categories.find(category => category.name === article.category)?.color,
-                              color: categories.find(category => category.name === article.category)?.color
-                            }}>
-                            {article.category}
-                          </HomeBadge>
-                        </h3>
-                      </HomeCard.Header>
-                    ) : (
-                      ''
-                    )}
                     {article.previewImg ? (
                       <>
                         <HomeCard.Img
                           src={article.previewImg}
                           alt={article.title}
-                          style={{filter: 'blur(2px)'}}
+                          style={{ opacity: 0.75 }}
                         />
                         <HomeCard.ImgOverlay>
+                        {article.category ? (
+                            <HomeCard.Header>
+                              <h3>
+                                <HomeBadge
+                                  style={{
+                                    borderColor: categories.find(category => category.name === article.category)?.color,
+                                    color: categories.find(category => category.name === article.category)?.color
+                                  }}>
+                                  {article.category}
+                                </HomeBadge>
+                              </h3>
+                            </HomeCard.Header>
+                          ) : (
+                            ''
+                          )}
                           <HomeCard.Body>
-                            <HomeCard.Title>{article.title}</HomeCard.Title>
                             <HomeCard.Text>{article.description}</HomeCard.Text>
                           </HomeCard.Body>
                         </HomeCard.ImgOverlay>
@@ -197,7 +196,6 @@ const Home: React.FC = () => {
                     ) : (
                       <>
                         <HomeCard.Body>
-                          <HomeCard.Title>{article.title}</HomeCard.Title>
                           <HomeCard.Text>{article.description}</HomeCard.Text>
                         </HomeCard.Body>
                       </>
